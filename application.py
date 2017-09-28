@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 
 from models import Base, Category, Item
 from sqlalchemy import create_engine
@@ -36,6 +36,7 @@ def newCategory():
 		newCategory = Category(name=request.form['name'])
 		session.add(newCategory)
 		session.commit()
+		flash("category add success!")
 		return redirect(url_for('showCategories'))
 	else:
 		return render_template('newCategory.html')
@@ -52,6 +53,7 @@ def editCategory(category_id):
 			editedCategory.name = request.form['name']
 			session.add(editedCategory)
 			session.commit()
+			flash("category edit success!")
 			return redirect(url_for('showCategories'))
 	else:
 		return render_template('editCategory.html', category=editedCategory)
@@ -67,6 +69,7 @@ def deleteCategory(category_id):
 		if request.form['confirm']:
 			session.delete(categoryToDelete)
 			session.commit()
+			flash("category delete success!")
 			return redirect(url_for('showCategories'))
 	else:
 		return render_template('deleteCategory.html', category=categoryToDelete)
@@ -92,6 +95,7 @@ def newItem(category_id):
 		newItem = Item(name=request.form['name'], description=request.form['description'], category_id=category_id)
 		session.add(newItem)
 		session.commit()
+		flash("item add success!")
 		return redirect(url_for('showItems', category_id=category_id))
 	else:
 		return render_template('newItem.html', category=category)
@@ -111,6 +115,7 @@ def editItem(category_id, item_id):
 
 		session.add(editedItem)
 		session.commit()
+		flash("item edit success!")
 		return redirect(url_for('showItems', category_id=category_id))
 	else:
 		return render_template('editItem.html', category_id=category_id, item=editedItem)
@@ -126,6 +131,7 @@ def deleteItem(category_id, item_id):
 		if request.form['confirm']:
 			session.delete(itemToDelete)
 			session.commit()
+			flash("item delete success!")
 			return redirect(url_for('showItems', category_id=category_id))
 	else:
 		return render_template('deleteItem.html', category_id=category_id, item=itemToDelete)
@@ -133,4 +139,5 @@ def deleteItem(category_id, item_id):
 
 if __name__ == '__main__':
 	app.debug = True
+	app.secret_key = 'super secret key'
 	app.run(host='0.0.0.0', port=8000)
