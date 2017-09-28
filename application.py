@@ -12,6 +12,14 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+## JSON endpoints for db items ##
+@app.route('/category.json')
+def categoriesJSON():
+	categories = session.query(Category).all()
+	for c in categories:
+		return jsonify(Category=[c.serialize for c in categories])
+
+
 ## Query all entries in Category table, display in template ##
 @app.route('/')
 @app.route('/category/')
