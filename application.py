@@ -74,6 +74,55 @@ def showItems(category_id):
 	return render_template('items.html', items=items, category=category)
 
 
+## Add a new item to catalog ##
+# Category_id will keep the items arranged under the top level categories
+@app.route('/category/<int:category_id>/items/new/', methods=['GET', 'POST'])
+def newItem(category_id):
+	category = session.query(Category).filter_by(id=category_id).one()
+
+	if request.method == 'POST':
+		newItem = Item(name=request.form['name'], description=request.form['description'], category_id=category_id)
+		session.add(newItem)
+		session.commit()
+		return redirect(url_for('showItems', category_id=category_id))
+	else:
+		return render_template('newItem.html', category=category)
+
+
+## Edit existing item in catalog ##
+# Gets item to be edited and passes to form to pre-fill inputs
+@app.route('/category/<int:category_id>/items/<int:item_id>/edit/', methods=['GET', 'POST'])
+def editItem(category_id, item_id):
+	editedItem = session.query(Item).filter_by(category_id=category_id, id=item_id).one()
+
+	if request.method == 'POST':
+		if request.form['name']:
+			editedItem.name = request.form['name']
+		if request.form['description']:
+			editedItem.description = request.form['description']
+
+		session.add(editedItem)
+		session.commit()
+		return redirect(url_for('showItems', category_id=category_id))
+	else:
+		return render_template('editItem.html', category_id=category_id, item=editedItem)
+
+
+## Delete existing item in catalog ##
+# Sends item object to be deleted, category_id is for redirecting to correct category afterwards
+@app.route('/category/<int:category_id>/items/<int:item_id>/delete/', methods=['GET', 'POST'])
+def deleteItem(category_id, item_id):
+	itemToDelete = session.query(Item).filter_by(category_id=category_id, id=item_id).one()
+
+	if request.method == 'POST':
+		if request.form['confirm']:
+			session.delete(itemToDelete)
+			session.commit()
+			return redirect(url_for('showItems', category_id=category_id))
+	else:
+		return render_template('deleteItem.html', category_id=category_id, item=itemToDelete)
+
+
 if __name__ == '__main__':
 	app.debug = True
 	app.run(host='0.0.0.0', port=8000)

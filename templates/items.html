@@ -18,23 +18,23 @@
 		{% endwith %}
 
 		{% if items !=[] %}
-			<a href = "#">Create New Item</a>
+			<a href = "{{url_for('newItem', category_id=category.id)}}">Create New Item</a>
 			</br></br>
 
 			{% for i in items %}
 				<p>{{i.name}}</p>
 				<p>{{i.description}}</p>
 
-				<a href="#">Edit</a>
+				<a href="{{url_for('editItem', category_id=category.id, item_id=i.id)}}">Edit</a>
 				</br>
-				<a href="#">Delete</a>
+				<a href="{{url_for('deleteItem', category_id=category.id, item_id=i.id)}}">Delete</a>
 				</br>
 				</br>
 			{% endfor %}
 
 		{% else %}
 			<p> You currently have no menu items. <p>
-			<a href = "#">Create New Item</a>
+			<a href = "{{url_for('newItem', category_id=category.id)}}">Create New Item</a>
 		{% endif %}
 
 		<br>
