@@ -1,0 +1,13 @@
+<html>
+
+<head>
+</head>
+
+<body>
+	<h1>Delete {{category.name}}?</h1>
+	<form action="{{url_for('deleteCategory', category_id=category.id)}}" method = 'post'>
+		<input type='submit' value='Confirm' name='confirm'>
+	</form>
+</body>
+
+</html>
