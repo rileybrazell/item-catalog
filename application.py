@@ -1,7 +1,7 @@
 ## for backend and site building ##
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 ## for database operations ##
-from models import Base, Category, Item
+from models import Base, Category, Item, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 ## for oauth login ##
@@ -104,6 +104,11 @@ def gconnect():
 	output += login_session['username']
 	output += '!</h1>'
 
+	user_id = getUserID(data["email"])
+	if not user_id:
+		user_id = createUser(login_session)
+	login_session['user_id'] = user_id
+
 	flash("you are now logged in as %s" % login_session['username'])
 	return output
 ## GCONNECT END ##
@@ -138,6 +143,30 @@ def gdisconnect():
 		response = make_response(json.dumps('Failed to revoke token for given user'), 400)
 		response.headers['Content-Type'] = 'application/json'
 		return response
+## GDISCONNECT END ##
+
+
+## User functions START ##
+def createUser(login_session):
+	newUser = User(name=login_session['username'], email=login_session['email'])
+	session.add(newUser)
+	session.commit()
+	user = session.query(User).filter_by(email=login_session['email']).one()
+	return user.id
+
+
+def getUserInfo(user_id):
+	user = session.query(User).filter_by(id=user_id).one()
+	return user
+
+
+def getUserID(email):
+	try:
+		user = session.query(User).filter_by(email=email).one()
+		return user_id
+	except:
+		return None
+## User functions END ##
 ### OAuth login code end ###
 
 
@@ -161,6 +190,8 @@ def showCategories():
 # Adds new entry to Category table #
 @app.route('/category/new/', methods=['GET', 'POST'])
 def newCategory():
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		newCategory = Category(name=request.form['name'])
 		session.add(newCategory)
@@ -176,7 +207,8 @@ def newCategory():
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
 	editedCategory = session.query(Category).filter_by(id=category_id).one()
-
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		if request.form['name']:
 			editedCategory.name = request.form['name']
@@ -193,7 +225,8 @@ def editCategory(category_id):
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
 	categoryToDelete = session.query(Category).filter_by(id=category_id).one()
-
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		if request.form['confirm']:
 			session.delete(categoryToDelete)
@@ -219,7 +252,8 @@ def showItems(category_id):
 @app.route('/category/<int:category_id>/items/new/', methods=['GET', 'POST'])
 def newItem(category_id):
 	category = session.query(Category).filter_by(id=category_id).one()
-
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		newItem = Item(name=request.form['name'], description=request.form['description'], category_id=category_id)
 		session.add(newItem)
@@ -235,7 +269,8 @@ def newItem(category_id):
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editItem(category_id, item_id):
 	editedItem = session.query(Item).filter_by(category_id=category_id, id=item_id).one()
-
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		if request.form['name']:
 			editedItem.name = request.form['name']
@@ -255,7 +290,8 @@ def editItem(category_id, item_id):
 @app.route('/category/<int:category_id>/items/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
 	itemToDelete = session.query(Item).filter_by(category_id=category_id, id=item_id).one()
-
+	if 'username' not in login_session:
+		return redirect('/login')
 	if request.method == 'POST':
 		if request.form['confirm']:
 			session.delete(itemToDelete)
