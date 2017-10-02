@@ -30,7 +30,7 @@ class Category(Base):
 	def serialize(self):
 		return {
 			'name': self.name,
-			'id': self.id,
+			'id': self.id
 		}
 
 
@@ -49,8 +49,7 @@ class Item(Base):
 		return {
 			'name': self.name,
 			'description': self.description,
-			'id': self.id,
-			'category_id': self.category_id
+			'id': self.id
 		}
 
 

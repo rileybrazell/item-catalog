@@ -1,0 +1,42 @@
+<html>
+
+<head>
+</head>
+
+<body>
+	<div class = 'pane'>
+		<h1>{{ category.name }}</h1>
+
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul>
+					{% for message in messages %}
+						<li> <strong> {{ message }} </strong> </li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+
+		{% if items !=[] %}
+			<a href = "{{url_for('newItem', category_id=category.id)}}">Create New Item</a>
+			</br></br>
+
+			{% for i in items %}
+				<p>{{i.name}}</p>
+				<p>{{i.description}}</p>
+				</br>
+				</br>
+			{% endfor %}
+
+		{% else %}
+			<p> There are no items in this category. <p>
+			<a href = "{{url_for('newItem', category_id=category.id)}}">Create New Item</a>
+		{% endif %}
+
+		<br>
+		<br>
+		<a href="{{url_for('showCategories')}}"><p>Back to main</p></a>
+	</div>
+</body>
+
+</html>

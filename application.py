@@ -182,6 +182,9 @@ def categoriesJSON():
 @app.route('/')
 @app.route('/category/')
 def showCategories():
+	if 'username' not in login_session:
+		categories = session.query(Category).all()
+		return render_template('publicCategories.html', categories=categories)
 	categories = session.query(Category).all()
 	return render_template('categories.html', categories=categories)
 
@@ -193,7 +196,7 @@ def newCategory():
 	if 'username' not in login_session:
 		return redirect('/login')
 	if request.method == 'POST':
-		newCategory = Category(name=request.form['name'])
+		newCategory = Category(name=request.form['name'], user_id=login_session['user_id'])
 		session.add(newCategory)
 		session.commit()
 		flash("category add success!")
@@ -206,9 +209,11 @@ def newCategory():
 # URLs contain category id, used to get entry from Category table and commit changes to name #
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
-	editedCategory = session.query(Category).filter_by(id=category_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	editedCategory = session.query(Category).filter_by(id=category_id).one()
+	if editedCategory.user_id != login_session['user_id']:
+		return "<script>function myFunction() {alert('You are not authorized to edit this category.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
 		if request.form['name']:
 			editedCategory.name = request.form['name']
@@ -224,11 +229,17 @@ def editCategory(category_id):
 # Get entry from Category table, delete, and commit deletion #
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
-	categoryToDelete = session.query(Category).filter_by(id=category_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	categoryToDelete = session.query(Category).filter_by(id=category_id).one()
+	itemsToDelete = session.query(Item).filter_by(category_id=category_id).all()
+	if categoryToDelete.user_id != login_session['user_id']:
+		return "<script>function myFunction() {alert('You are not authorized to delete this category.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
 		if request.form['confirm']:
+			for i in itemsToDelete:
+				session.delete(i)
+				session.commit()
 			session.delete(categoryToDelete)
 			session.commit()
 			flash("category delete success!")
@@ -244,6 +255,9 @@ def deleteCategory(category_id):
 def showItems(category_id):
 	category = session.query(Category).filter_by(id=category_id).one()
 	items = session.query(Item).filter_by(category_id=category_id).all()
+	creator = getUserInfo(category.user_id)
+	if 'username' not in login_session or creator.id != login_session['user_id']:
+		return render_template('publicItems.html', items=items, category=category)
 	return render_template('items.html', items=items, category=category)
 
 
@@ -251,11 +265,13 @@ def showItems(category_id):
 # Category_id will keep the items arranged under the top level categories #
 @app.route('/category/<int:category_id>/items/new/', methods=['GET', 'POST'])
 def newItem(category_id):
-	category = session.query(Category).filter_by(id=category_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	category = session.query(Category).filter_by(id=category_id).one()
+	if login_session['user_id'] != category.user_id:
+		return "<script>function myFunction() {alert('You are not authorized to add items to this category.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
-		newItem = Item(name=request.form['name'], description=request.form['description'], category_id=category_id)
+		newItem = Item(name=request.form['name'], description=request.form['description'], category_id=category_id, user_id=category.user_id)
 		session.add(newItem)
 		session.commit()
 		flash("item add success!")
@@ -268,9 +284,12 @@ def newItem(category_id):
 # Gets item to be edited and passes to form to pre-fill inputs #
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editItem(category_id, item_id):
-	editedItem = session.query(Item).filter_by(category_id=category_id, id=item_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	editedItem = session.query(Item).filter_by(id=item_id).one()
+	category = session.query(Category).filter_by(id=category_id).one()
+	if login_session['user_id'] != category.user_id:
+		return "<script>function myFunction() {alert('You are not authorized to edit items in this category.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
 		if request.form['name']:
 			editedItem.name = request.form['name']
@@ -282,16 +301,19 @@ def editItem(category_id, item_id):
 		flash("item edit success!")
 		return redirect(url_for('showItems', category_id=category_id))
 	else:
-		return render_template('editItem.html', category_id=category_id, item=editedItem)
+		return render_template('editItem.html', category_id=category.id, item=editedItem)
 
 
 ## Delete existing item in catalog ##
 # Sends item object to be deleted, category_id is for redirecting to correct category afterwards #
 @app.route('/category/<int:category_id>/items/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
-	itemToDelete = session.query(Item).filter_by(category_id=category_id, id=item_id).one()
 	if 'username' not in login_session:
 		return redirect('/login')
+	itemToDelete = session.query(Item).filter_by(id=item_id).one()
+	category = session.query(Category).filter_by(id=category_id).one()
+	if login_session['user_id'] != category.user_id:
+		return "<script>function myFunction() {alert('You are not authorized to delete items from this category.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
 		if request.form['confirm']:
 			session.delete(itemToDelete)
