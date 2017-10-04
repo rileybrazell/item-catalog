@@ -23,7 +23,9 @@ session = DBSession()
 
 
 ### OAuth login code ###
-## GCONNECT ##
+
+## GCONNECT START ##
+
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -111,10 +113,12 @@ def gconnect():
 
 	flash("you are now logged in as %s" % login_session['username'])
 	return output
+
 ## GCONNECT END ##
 
 
 ## GDISCONNECT START ##
+
 @app.route('/gdisconnect')
 def gdisconnect():
 	# Check if user is connected, only disconnect a connected user
@@ -143,10 +147,12 @@ def gdisconnect():
 		response = make_response(json.dumps('Failed to revoke token for given user'), 400)
 		response.headers['Content-Type'] = 'application/json'
 		return response
+
 ## GDISCONNECT END ##
 
 
 ## User functions START ##
+
 def createUser(login_session):
 	newUser = User(name=login_session['username'], email=login_session['email'])
 	session.add(newUser)
@@ -166,17 +172,39 @@ def getUserID(email):
 		return user_id
 	except:
 		return None
+
 ## User functions END ##
+
 ### OAuth login code end ###
 
 
-## JSON endpoints for db items ##
-@app.route('/category.json')
+### JSON endpoints START ###
+
+## All categories ##
+@app.route('/JSON')
+@app.route('/category/JSON')
 def categoriesJSON():
 	categories = session.query(Category).all()
-	for c in categories:
-		return jsonify(Category=[c.serialize for c in categories])
+	return jsonify(Category=[c.serialize for c in categories])
 
+
+## All items in a category ##
+@app.route('/category/<int:category_id>/JSON')
+def categoryItemsJSON(category_id):
+	items = session.query(Item).filter_by(category_id=category_id).all()
+	return jsonify(Item=[i.serialize for i in items])
+
+
+## Single item ##
+@app.route('/category/<int:category_id>/items/<int:item_id>/JSON')
+def itemJSON(category_id, item_id):
+	item = session.query(Item).filter_by(id=item_id).one()
+	return jsonify(Item=[item.serialize])
+
+### JSON endpoints END
+
+
+### HTML endpoints START ###
 
 ## Query all entries in Category table, display in template ##
 @app.route('/')
@@ -322,6 +350,8 @@ def deleteItem(category_id, item_id):
 			return redirect(url_for('showItems', category_id=category_id))
 	else:
 		return render_template('deleteItem.html', category_id=category_id, item=itemToDelete)
+
+### HTML endpoints END ###
 
 
 if __name__ == '__main__':
