@@ -1,0 +1,8 @@
+.list-group a {
+	text-decoration: none;
+}
+
+.list-group h3 {
+	text-decoration: underline;
+	color: black;
+}
