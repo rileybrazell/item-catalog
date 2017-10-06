@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+	<!-- Custom CSS sheet -->
+	<link rel="stylesheet" href="/static/css/style.css">
+	<!-- Required meta tags -->	
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="navbar sticky-top navbar-light bg-light" id="navbar">
+			<h1>{{ item.name }}</h1>
+			<a class="btn btn-dark" href="{{url_for('gdisconnect')}}" role="button">Logout</a>
+		</div>
+		<div class="row justify-content-center">
+			<label for="description">Description:</label>
+			<p id="description">{{item.description}}</p>
+		</div>
+		<div class="row justify-content-center">
+			<a href="{{url_for('showItems', category_id=category_id)}}"><p>Back to items</p></a>
+		</div>
+	</div>
+</body>

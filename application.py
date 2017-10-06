@@ -310,13 +310,9 @@ def newItem(category_id):
 
 ## Show item description ##
 @app.route('/category/<int:category_id>/items/<int:item_id>/')
-def itemDetail(item_id):
-	category = session.query(Category).filter_by(id=category_id).one()
+def itemDetail(item_id, category_id):
 	item = session.query(Item).filter_by(id=item_id).one()
-	creator = getUserInfo(category.user_id)
-	if 'username' not in login_session or creator.id != login_session['user_id']:
-		return render_template('publicItemDetail.html', item=item)
-	return render_template('itemDetail.html', item=item)
+	return render_template('itemDetail.html', item=item, category_id=category_id)
 
 
 ## Edit existing item in catalog ##

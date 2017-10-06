@@ -21,7 +21,7 @@
 			{% if items !=[] %}
 				<ul class="list-group">
 					{% for i in items %}
-						<li class="list-group-item"><a href="#"><h3>{{i.name}}</h3></a>
+						<li class="list-group-item"><a href="{{url_for('itemDetail', item_id=i.id, category_id=category.id)}}"><h3>{{i.name}}</h3></a>
 						<a href="{{url_for('editItem', category_id=category.id, item_id=i.id)}}">Edit</a> |
 						<a href="{{url_for('deleteItem', category_id=category.id, item_id=i.id)}}">Delete</a></li>
 					{% endfor %}
