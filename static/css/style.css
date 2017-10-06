@@ -14,3 +14,13 @@ h1 {
 	text-decoration: underline;
 	color: black;
 }
+
+#description-panel {
+	background-color: lightgrey;
+	margin: 0px 10px 10px 10px;
+	border-radius: 0px 0px 15px 15px;
+}
+
+#description {
+	padding-top: 10px;
+}

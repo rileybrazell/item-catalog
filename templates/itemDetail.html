@@ -18,8 +18,10 @@
 			<a class="btn btn-dark" href="{{url_for('gdisconnect')}}" role="button">Logout</a>
 		</div>
 		<div class="row justify-content-center">
-			<label for="description">Description:</label>
-			<p id="description">{{item.description}}</p>
+			<div class="container"><h4>Description:</h4></div>
+			<div class="container-fluid" id="description-panel">
+				<p id="description">{{item.description}}</p>
+			</div>
 		</div>
 		<div class="row justify-content-center">
 			<a href="{{url_for('showItems', category_id=category_id)}}"><p>Back to items</p></a>
