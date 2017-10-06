@@ -14,19 +14,25 @@
 <body>
 	<div class="container-fluid">
 		<div class="navbar sticky-top navbar-light bg-light" id="navbar">
-			<h2>Categories</h2>
+			<h1>Categories</h1>
 			<a class="btn btn-dark" href="{{url_for('gdisconnect')}}" role="button">Logout</a>
-			<!-- <a href="{{url_for('newCategory')}}"><p> Create a New Category </p></a> -->
 		</div>
 		<div class="row justify-content-center">
-			<ul class="list-group">
-				{% for category in categories %}
-					<li class="list-group-item"><a href = "{{url_for('showItems', category_id=category.id)}}"><h3>{{category.name}}</h3></a>
-					<a href = "{{url_for('editCategory', category_id=category.id)}}">Edit Category</a> | 
-					<a href = "{{url_for('deleteCategory', category_id=category.id)}}">Delete Category</a></li>
-				{% endfor %}
-				<li class="list-group-item"><a class="btn btn-dark" href="{{url_for('newCategory')}}" role="button">Add New Category</a></li>
-			</ul>
+			{% if categories !=[] %}
+				<ul class="list-group">
+					{% for category in categories %}
+						<li class="list-group-item"><a href = "{{url_for('showItems', category_id=category.id)}}"><h3>{{category.name}}</h3></a>
+						<a href = "{{url_for('editCategory', category_id=category.id)}}">Edit Category</a> | 
+						<a href = "{{url_for('deleteCategory', category_id=category.id)}}">Delete Category</a></li>
+					{% endfor %}
+					<li class="list-group-item"><a class="btn btn-dark" href="{{url_for('newCategory')}}" role="button">Add New Category</a></li>
+				</ul>
+			{% else %}
+				<ul class="list-group">
+					<li class="list-group-item"><p>You have no categories</p></li>
+					<li class="list-group-item"><a class="btn btn-dark" href="{{url_for('newCategory')}}">Add New Category</a></li>
+				</ul>
+			{% endif %}
 		</div>
 	</div>
 

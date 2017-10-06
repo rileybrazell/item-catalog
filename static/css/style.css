@@ -1,3 +1,11 @@
+h1 {
+	color: maroon;
+}
+
+.list-group {
+	width: 285px;
+}
+
 .list-group a {
 	text-decoration: none;
 }

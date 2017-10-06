@@ -1,15 +1,36 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+	<!-- Custom CSS sheet -->
+	<link rel="stylesheet" href="/static/css/style.css">
+	<!-- Required meta tags -->	
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 
 <body>
-	<h1>Edit Category</h1>
-	<form action="{{url_for('editCategory', category_id=category.id)}}" method = 'post'>
-		<p>Name:</p>
-		<input type ='text' size='30' name='name' placeholder="{{category.name}}">
-		<input type='submit' value='Edit'>
-	</form>
+	<div class="container-fluid">
+		<div class="navbar sticky-top navbar-light bg-light" id="navbar">
+			<h1>Edit Category</h1>
+			<a class="btn btn-dark" href="{{url_for('gdisconnect')}}" role="button">Logout</a>
+		</div>
+		<div class="form-group">
+			<form action="{{url_for('editCategory', category_id=category.id)}}" method="post">
+				<label for="name">Name:</label>
+				<input type="text" class="form-control" id="name" name="name" placeholder="{{category.name}}">
+				<br>
+				<div class="row justify-content-center">
+					<input type='submit' value='Edit'>
+				</div>
+			</form>
+		</div>
+		<div class="row justify-content-center">
+			<a href="{{url_for('showCategories')}}"><p>Back to main</p></a>
+		</div>
+	</div>
 </body>
 
 </html>

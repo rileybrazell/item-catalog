@@ -157,7 +157,7 @@ def createUser(login_session):
 	newUser = User(name=login_session['username'], email=login_session['email'])
 	session.add(newUser)
 	session.commit()
-	user = session.query(User).filter_by(email=login_session['email']).one()
+	user = session.query(User).filter_by(email=login_session['email']).first()
 	return user.id
 
 
@@ -308,6 +308,17 @@ def newItem(category_id):
 		return render_template('newItem.html', category=category)
 
 
+## Show item description ##
+@app.route('/category/<int:category_id>/items/<int:item_id>/')
+def itemDetail(item_id):
+	category = session.query(Category).filter_by(id=category_id).one()
+	item = session.query(Item).filter_by(id=item_id).one()
+	creator = getUserInfo(category.user_id)
+	if 'username' not in login_session or creator.id != login_session['user_id']:
+		return render_template('publicItemDetail.html', item=item)
+	return render_template('itemDetail.html', item=item)
+
+
 ## Edit existing item in catalog ##
 # Gets item to be edited and passes to form to pre-fill inputs #
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit/', methods=['GET', 'POST'])
@@ -329,7 +340,7 @@ def editItem(category_id, item_id):
 		flash("item edit success!")
 		return redirect(url_for('showItems', category_id=category_id))
 	else:
-		return render_template('editItem.html', category_id=category.id, item=editedItem)
+		return render_template('editItem.html', category=category, item=editedItem)
 
 
 ## Delete existing item in catalog ##
