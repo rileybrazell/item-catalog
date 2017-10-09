@@ -60,7 +60,7 @@ def gconnect():
         response = make_response(json.dumps(
             'Failed to upgrade the authorization code.'), 401)
         response.headers['Content-Type'] = 'application/json'
-    return response
+        return response
 
     # Check that credentials object has a valid access token
     access_token = credentials.access_token
@@ -80,14 +80,14 @@ def gconnect():
         response = make_response(json.dumps(
             "Token's user ID doesn't match given user ID."), 401)
         response.headers['Content-Type'] = 'application/json'
-    return response
+        return response
 
     # Verify that the access token is valid for this app
     if result['issued_to'] != CLIENT_ID:
         response = make_response(json.dumps(
             "Token's client ID does not match app's"), 401)
         response.headers['Content-Type'] = 'application/json'
-    return response
+        return response
 
     # Check to see if user is already logged in
     stored_credentials = login_session.get('credentials')
@@ -137,7 +137,7 @@ def gdisconnect():
         response = make_response(json.dumps(
             'Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
-    return response
+        return response
     # Use HTTP GET to revoke current token with Google
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % credentials
     h = httplib2.Http()
