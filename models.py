@@ -11,6 +11,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     email = Column(String(250))
+    categories = relationship("Category", cascade="save-update, delete, delete-orphan")
+    items = relationship("Item", cascade="save-update, delete, delete-orphan")
 
     @property
     def serialize(self):
@@ -25,9 +27,8 @@ class Category(Base):
     __tablename__ = 'category'
     name = Column(String(250), index=True)
     id = Column(Integer, primary_key=True)
-    items = relationship("Item")
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    items = relationship("Item", cascade="delete, delete-orphan")
 
     @property
     def serialize(self):
@@ -43,9 +44,7 @@ class Item(Base):
     name = Column(String(250))
     description = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship("Category")
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
 
     @property
     def serialize(self):
