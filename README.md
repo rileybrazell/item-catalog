@@ -5,12 +5,12 @@ create, edit, and delete database entries. This app was written in Python
 using Flask and SQLAlchemy for the backend with Bootstrap for responsive design.
 
 ## Getting Started
-Requires [Flask](http://flask.pocoo.org/docs/0.10/) and [SQLAlchemy](https://www.sqlalchemy.org/). 
+Requires [Flask](http://flask.pocoo.org/docs/0.10/), [SQLAlchemy](https://www.sqlalchemy.org/), and [oauth2client](https://github.com/google/oauth2client)
 - Clone or download and unzip files
 - `pip install flask sqlalchemy` in the same directory as `application.py`
 - `python models.py` to build the database
 - `python application.py` and open a browser to `localhost:8000` to access app
-- Login with Google OAuth2 to create, edit, and delete database items
+- Login with Google to create, edit, and delete database items
 
 ### What I Learned
 In the course of building this app I learned the structure of a modern webapp.
