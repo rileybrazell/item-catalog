@@ -153,7 +153,7 @@ def gdisconnect():
         response = make_response(json.dumps(
             'Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        return response
+        return redirect('/category')
     else:
         # If the token was invalid for any reason
         response = make_response(json.dumps(
